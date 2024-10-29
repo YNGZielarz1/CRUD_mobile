@@ -1,0 +1,74 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="APIv2_mobile.MainPage"
+             BackgroundColor="#ffffff">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Tytuł sekcji dodawania użytkownika -->
+            <Label Text="Dodaj nowego użytkownika" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="#333"/>
+
+            <!-- Sekcja formularza dodawania użytkownika -->
+            <StackLayout Spacing="10" BackgroundColor="#f2f2f2" Padding="15">
+                <Label Text="Podaj ID:" FontSize="18" TextColor="#333"/>
+                <Entry x:Name="idEntry" Placeholder="np. 1" Keyboard="Numeric"/>
+
+                <Label Text="Podaj nazwę środka trwałego:" FontSize="18" TextColor="#333"/>
+                <Entry x:Name="nameEntry" Placeholder="np. Laptop Dell XS"/>
+
+                <Label Text="Podaj miejsce:" FontSize="18" TextColor="#333"/>
+                <Entry x:Name="placeEntry" Placeholder="np. Biuro pokój 101"/>
+
+                <Label Text="Podaj lokalizację:" FontSize="18" TextColor="#333"/>
+                <Entry x:Name="locationEntry" Placeholder="np. Warszawa"/>
+
+                <Label Text="Podaj osobę odpowiedzialną:" FontSize="18" TextColor="#333"/>
+                <Entry x:Name="responsiblePersonEntry" Placeholder="np. Jan Kowalski"/>
+            </StackLayout>
+
+            <!-- Przyciski operacyjne -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Padding="0,10">
+                <Button Grid.Column="0" Text="Dodaj" BackgroundColor="#4CAF50" TextColor="White" Clicked="OnAddUserClicked" HeightRequest="45"/>
+                <Button Grid.Column="1" Text="Lista" BackgroundColor="#FFC107" TextColor="White" Clicked="OnGetUsersClicked" HeightRequest="45"/>
+                <Button Grid.Column="2" Text="Szczegóły" BackgroundColor="#03A9F4" TextColor="White" Clicked="OnGetUserClicked" HeightRequest="45"/>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Padding="0,10">
+                <Button Grid.Column="0" Text="Edytuj" BackgroundColor="#FFC107" TextColor="White" Clicked="OnEditUserClicked" HeightRequest="45"/>
+                <Button Grid.Column="1" Text="Usuń" BackgroundColor="#F44336" TextColor="White" Clicked="OnDeleteUserClicked" HeightRequest="45"/>
+            </Grid>
+
+            <!-- Sekcja szczegółów użytkownika -->
+            <Frame x:Name="userDetailsFrame" IsVisible="False" BackgroundColor="#f5f5f5" Padding="15" Margin="0, 15">
+                <VerticalStackLayout Spacing="5">
+                    <Label x:Name="userIdLabel" FontAttributes="Bold" FontSize="Medium" TextColor="#03A9F4"/>
+                    <Label x:Name="userNameLabel" FontSize="Medium" FontAttributes="Bold"/>
+                    <Label x:Name="userPlaceLabel" FontSize="Small" TextColor="Gray"/>
+                    <Label x:Name="userLocationLabel" FontSize="Small" TextColor="Gray"/>
+                    <Label x:Name="userResponsiblePersonLabel" FontSize="Small" TextColor="Gray"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Kolekcja użytkowników -->
+            <CollectionView x:Name="usersCollectionView" Margin="0,15" BackgroundColor="#f2f2f2" HeightRequest="300">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" Margin="5" BackgroundColor="#FFFFFF" HasShadow="True">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="ID:" FontAttributes="Bold" TextColor="#03A9F4"/>
+                                <Label Text="{Binding Id}" FontAttributes="Bold" TextColor="#333"/>
+                                <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="Medium" TextColor="#333"/>
+                                <Label Text="{Binding Place}" FontSize="Small" TextColor="Gray"/>
+                                <Label Text="{Binding Location}" FontSize="Small" TextColor="Gray"/>
+                                <Label Text="{Binding ResponsiblePerson}" FontSize="Small" TextColor="Gray"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

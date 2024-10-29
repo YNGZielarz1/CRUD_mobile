@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace APIv2_mobile
 {
@@ -16,31 +17,39 @@ namespace APIv2_mobile
         // Dodaj nowego użytkownika
         private void OnAddUserClicked(object sender, EventArgs e)
         {
-            if (int.TryParse(idEntry.Text, out int id) && !string.IsNullOrEmpty(nameEntry.Text))
+            if (!string.IsNullOrEmpty(nameEntry.Text))
             {
+                // Znajdź największe ID w kolekcji użytkowników i dodaj 1
+                int newId = users.Any() ? users.Max(u => u.Id) + 1 : 1;
+
                 var newUser = new User
                 {
-                    Id = id,
+                    Id = newId,
                     Name = nameEntry.Text,
                     Location = locationEntry.Text,
                     Place = placeEntry.Text,
                     ResponsiblePerson = responsiblePersonEntry.Text
                 };
+
                 users.Add(newUser);
-                DisplayAlert("Sukces", "Użytkownik został dodany", "OK");
+                DisplayAlert("Sukces", $"Użytkownik został dodany z ID: {newId}", "OK");
+
+                // Wyczyść pola po dodaniu użytkownika
+                ClearEntryFields();
             }
             else
             {
-                DisplayAlert("Błąd", "ID oraz nazwa są wymagane.", "OK");
+                DisplayAlert("Błąd", "Nazwa jest wymagana.", "OK");
             }
         }
 
-        // Wyświetl wszystkich użytkowników
-        private void OnGetUsersClicked(object sender, EventArgs e)
+        // Wyczyść pola wprowadzania
+        private void ClearEntryFields()
         {
-            // Przypisz listę użytkowników do CollectionView, aby je wyświetlić
-            usersCollectionView.ItemsSource = users;
-            DisplayAlert("Informacja", $"Łącznie użytkowników: {users.Count}", "OK");
+            nameEntry.Text = string.Empty;
+            locationEntry.Text = string.Empty;
+            placeEntry.Text = string.Empty;
+            responsiblePersonEntry.Text = string.Empty;
         }
 
         // Wyświetl szczegóły użytkownika
@@ -119,6 +128,56 @@ namespace APIv2_mobile
                 DisplayAlert("Błąd", "Wprowadź poprawny numer ID", "OK");
             }
         }
+
+        // Usuń użytkownika z widoku szczegółowego
+        private void OnDeleteUserClickedFromDetails(object sender, EventArgs e)
+        {
+            if (int.TryParse(userIdLabel.Text.Split(':')[1].Trim(), out int id))
+            {
+                var user = users.FirstOrDefault(u => u.Id == id);
+                if (user != null)
+                {
+                    users.Remove(user);
+                    DisplayAlert("Sukces", "Użytkownik został usunięty", "OK");
+                    userDetailsFrame.IsVisible = false;
+                }
+                else
+                {
+                    DisplayAlert("Błąd", "Nie znaleziono użytkownika o podanym ID", "OK");
+                }
+            }
+            else
+            {
+                DisplayAlert("Błąd", "Nie można usunąć użytkownika. Spróbuj ponownie.", "OK");
+            }
+        }
+
+        // Wyświetl wszystkich użytkowników
+        private void OnGetUsersClicked(object sender, EventArgs e)
+        {
+            // Przypisz listę użytkowników do CollectionView, aby je wyświetlić
+            usersCollectionView.ItemsSource = users;
+            DisplayAlert("Informacja", $"Łącznie użytkowników: {users.Count}", "OK");
+        }
+        // Wyświetl szczegóły użytkownika po kliknięciu na element w CollectionView
+        private void OnUserSelected(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedUser = e.CurrentSelection.FirstOrDefault() as User;
+            if (selectedUser != null)
+            {
+                // Ustaw szczegóły użytkownika
+                userIdLabel.Text = $"ID: {selectedUser.Id}";
+                userNameLabel.Text = $"Nazwa: {selectedUser.Name}";
+                userPlaceLabel.Text = $"Miejsce: {selectedUser.Place}";
+                userLocationLabel.Text = $"Lokalizacja: {selectedUser.Location}";
+                userResponsiblePersonLabel.Text = $"Osoba odpowiedzialna: {selectedUser.ResponsiblePerson}";
+
+                userDetailsFrame.IsVisible = true; // Pokaż szczegóły
+                                                   // Zresetuj wybór, aby uniknąć ponownego wywołania zdarzenia
+                usersCollectionView.SelectedItem = null;
+            }
+        }
+
     }
 
     // Klasa reprezentująca użytkownika
